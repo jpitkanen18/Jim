@@ -1,7 +1,8 @@
+#pragma once
 #include <vector>
 #include <fstream>
 #include <sstream>
-#include <iostream>
+#include <ncurses.h>
 
 struct vec2 {
 	vec2(): x(0),y(0){ }
@@ -16,63 +17,90 @@ enum Direction {
 };
 
 class Canvas {
-	char** canvasBuffer;
-	char** dataBuffer;
+	char** CanvasBuffer;
+	char** DataBuffer;
 	public:
 		int Columns;
 		int Rows;
-		int numLines;
+		int NumLines;
+		int OffsetX;
+		int OffsetY;
 		vec2 CursorLocation;
 
 		Canvas(int col, int row, vec2 savedCursorLoc = vec2()){
 			Columns = col;
 			Rows = row;
 			CursorLocation = savedCursorLoc;
-			canvasBuffer = (char**) malloc(sizeof *canvasBuffer * Rows); 
-			*canvasBuffer = (char*) malloc(sizeof **canvasBuffer * Columns);
+			CanvasBuffer = (char**) malloc(sizeof *CanvasBuffer * Rows); 
+			*CanvasBuffer = (char*) malloc(sizeof **CanvasBuffer * Columns);
+			OffsetX = 0;
+			OffsetY = 5;
 			for(int i = 0; i < row; i++){
 				std::vector<char> vec(col);
-				canvasBuffer[i] = reinterpret_cast<char*>(vec.data());
-			}
-			for(int i = 0; i < Rows; i++){
-				std::cout << canvasBuffer[i] << std::endl;
+				CanvasBuffer[i] = reinterpret_cast<char*>(vec.data());
 			}
 		}
 
 		void loadFile(std::string filePath){
 			std::string line;
 			std::ifstream inFile(filePath);
-			dataBuffer = (char**) malloc(sizeof *dataBuffer * Rows); 
-			*dataBuffer = (char*) malloc(sizeof **dataBuffer * Columns);
+			
 			if(inFile.is_open()) {
 				while(!inFile.eof()) { 
 					std::getline(inFile, line);
-					dataBuffer[numLines] =  strcpy((char*)malloc(line.length()+1), line.c_str());
-					numLines++;
+					NumLines++;
+				}
+    		}
+			
+			DataBuffer = (char**) malloc(sizeof *DataBuffer * NumLines); 
+			if(inFile.is_open()) {
+				int i = 0;
+				inFile.clear();
+				inFile.seekg(0, std::ios::beg);
+				while(!inFile.eof()) { 
+					std::getline(inFile, line);
+					DataBuffer[i] = (char*)malloc(line.length() + 1);
+					strcpy(DataBuffer[i], line.c_str());
+					i++;
 				}
 				inFile.close();
     		}
+		}
 
+		void render() {
+			clear();
+			for(int i = OffsetX; i < Rows; i++) {
+				CanvasBuffer[i] = DataBuffer[i];
+			}
+			for(int i = 0; i < Rows; i++){
+				println(CanvasBuffer[i]);
+			}
+			move(CursorLocation.y, CursorLocation.x);
+			refresh();
 		}
 
 		void moveCursor(Direction dir){
 			switch(dir){
 				case UP:
-					if(CursorLocation.y <= 0)
+					--CursorLocation.y;
+					if(CursorLocation.y < 0)
 						CursorLocation.y = 0;
-					CursorLocation.y -= 1;
+					break;
 				case DOWN:
-					if(CursorLocation.y >= Rows)
-						CursorLocation.y = 0;
-					CursorLocation.y += 1;
+					CursorLocation.y++;
+					if(CursorLocation.y > Rows)
+						CursorLocation.y = Rows - 1;
+					break;
 				case LEFT:
-					if(CursorLocation.x <= 0)
+					--CursorLocation.x;
+					if(CursorLocation.x < 0)
 						CursorLocation.x = 0;
-					CursorLocation.x -= 1;
+					break;
 				case RIGHT:
-					if(CursorLocation.x >= Columns)
-						CursorLocation.x = 0;
-					CursorLocation.x += 1;
+					CursorLocation.x++;
+					if(CursorLocation.x > Columns)
+						CursorLocation.x = Columns - 1;
+					break;
 			}
 		}
 

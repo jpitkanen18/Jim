@@ -1,1 +1,1 @@
-clang++ src/main.cpp -o jim
+clang++ -std=c++17 src/main.cpp -o jim -lncurses

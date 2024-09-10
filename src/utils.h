@@ -12,9 +12,23 @@ void println(std::string printable){
 	printw("%s\n", printable.data());
 }
 
-void println(const char* printable) {
-	std::string lol = printable;
+void println(char* printable) {
+	std::string lol(printable);
 	println(lol);
+}
+
+void println(const char* printable) {
+	std::string lol(printable);
+	println(lol);
+}
+
+void println(char printable) {
+	std::string str(1, printable);
+	println(str);
+}
+
+void println(int printable) {
+	println(std::to_string(printable));
 }
 
 void printMetadata(){

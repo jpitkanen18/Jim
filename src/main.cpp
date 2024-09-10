@@ -52,9 +52,9 @@ int main(int argc, char** argv){
 	struct winsize size;
 	ioctl(STDOUT_FILENO, TIOCGWINSZ, &size);
 	print("ws_col: ");
-	println(std::to_string(size.ws_col));
+	println(size.ws_col);
 	print("ws_row: ");
-	println(std::to_string(size.ws_row));
+	println(size.ws_row);
 	if(argc == 1){
 		if(debug){
 			println("No file provided :(");
@@ -73,13 +73,17 @@ int main(int argc, char** argv){
 
 	void (Canvas::*defCB)(void) = &Canvas::render;
 	void (Canvas::*moveCB)(Direction dir) = &Canvas::moveCursor;
+	void (Canvas::*enterInsert)(void) = &Canvas::enterInsertMode;
+	void (Canvas::*exitInsert)(void) = &Canvas::enterInsertMode;
 
 	InputHandler input(&canvas, defCB);
 
-	input.addKeyCallback(KEY_UP, moveCB, UP);
-	input.addKeyCallback(KEY_DOWN, moveCB, DOWN);
-	input.addKeyCallback(KEY_LEFT, moveCB, LEFT);
-	input.addKeyCallback(KEY_RIGHT, moveCB, RIGHT);
+	input.addKeyCallback(KEY_UP, moveCB, UP, true);
+	input.addKeyCallback(KEY_DOWN, moveCB, DOWN, true);
+	input.addKeyCallback(KEY_LEFT, moveCB, LEFT, true);
+	input.addKeyCallback(KEY_RIGHT, moveCB, RIGHT, true);
+	input.addKeyCallback(105, enterInsert);
+	input.addKeyCallback(27, exitInsert, true);
 
 	input.listen();
 

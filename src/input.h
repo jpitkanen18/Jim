@@ -50,8 +50,7 @@ class InputHandler {
 						if(KeyArgs.find(key) != KeyArgs.end()){
 							std::invoke(callbackForKey, *CanvasPtr, KeyArgs[key]);
 						}
-					}
-					if(KeyCallbacksVoid.find(key) != KeyCallbacksVoid.end()) {
+					}  else if(KeyCallbacksVoid.find(key) != KeyCallbacksVoid.end()) {
 						void (Canvas::*callbackForKey)(void) = KeyCallbacksVoid[key];
 						std::invoke(callbackForKey, *CanvasPtr);
 					}

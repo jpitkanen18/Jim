@@ -74,7 +74,7 @@ int main(int argc, char** argv){
 	void (Canvas::*defCB)(void) = &Canvas::render;
 	void (Canvas::*moveCB)(Direction dir) = &Canvas::moveCursor;
 	void (Canvas::*enterInsert)(void) = &Canvas::enterInsertMode;
-	void (Canvas::*exitInsert)(void) = &Canvas::enterInsertMode;
+	void (Canvas::*exitInsert)(void) = &Canvas::exitInsertMode;
 
 	InputHandler input(&canvas, defCB);
 

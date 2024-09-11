@@ -7,7 +7,7 @@
             "request": "launch",
             "program": "${workspaceFolder}/jim",
             "args": [
-                "../build.sh"
+                "main.cpp"
             ],
             "stopAtEntry": false,
             "cwd": "${fileDirname}",

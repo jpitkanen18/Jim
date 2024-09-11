@@ -121,12 +121,14 @@ class Canvas {
 		}
 
 		void enterCharacter(int key) {
-			if(key >= 32 && key <= 126){
-				DataBuffer[CursorLocation.y][CursorLocation.x] = char(key);
-			} else if (key == KEY_BACKSPACE) {
-				removeAt(DataBuffer[CursorLocation.y], CursorLocation.x);
+			int yPos = CursorLocation.y + OffsetY;
+			int xPos = CursorLocation.x + OffsetX;
+			if (key == 127) {				removeAt(DataBuffer[yPos], xPos);
+				CursorLocation.x--;
+			} else if(key >= 32 && key <= 126){
+				DataBuffer[yPos][xPos] = char(key);
+				CursorLocation.x++;
 			}
-			CursorLocation.x++;
 		}
 
 		void moveCursor(Direction dir){

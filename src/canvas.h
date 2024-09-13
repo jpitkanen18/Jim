@@ -22,6 +22,7 @@ class Canvas {
 	char** CanvasBuffer;
 	char** DataBuffer;
 	bool insertMode = false;
+	std::vector<int> DataMallocced;
 	public:
 		int Columns;
 		int Rows;
@@ -62,6 +63,7 @@ class Canvas {
 				while(!inFile.eof()) { 
 					std::getline(inFile, line);
 					DataBuffer[i] = (char*)malloc(line.length() + 1);
+					DataMallocced.push_back(line.length() + 1);
 					strcpy(DataBuffer[i], line.data());
 					i++;
 				}
@@ -115,19 +117,72 @@ class Canvas {
 			return insertMode;
 		}
 
-		void removeAt(char* str, int idx) {
-			size_t len = strlen(str);
-			memmove(str + idx, str + idx + 1, len - idx);
+		std::string removeAt(char* str, int idx) {
+			std::string temp(str);			temp.erase(idx, 1);
+			return temp;
+		}
+
+		void mallocNewLine(int yPos, int size = CHAR_MAX) {
+			DataBuffer[yPos] = (char*) malloc(size);
+			DataMallocced.push_back(size);
 		}
 
 		void enterCharacter(int key) {
 			int yPos = CursorLocation.y + OffsetY;
 			int xPos = CursorLocation.x + OffsetX;
-			if (key == 127) {				removeAt(DataBuffer[yPos], xPos);
+			if (key == 127) {
+				if(xPos == 0 || yPos >= DataMallocced.size()){
+					return;
+				}
+				strcpy(DataBuffer[yPos], removeAt(DataBuffer[yPos], xPos).data());
 				CursorLocation.x--;
 			} else if(key >= 32 && key <= 126){
-				DataBuffer[yPos][xPos] = char(key);
+				if(yPos >= DataMallocced.size()){
+					mallocNewLine(yPos);
+					DataBuffer[yPos][xPos] = char(key);
+				} else {
+					std::string temp(DataBuffer[yPos]);
+					temp.insert(xPos, 1, char(key));
+					if(strlen(DataBuffer[yPos]) + temp.size() > DataMallocced[yPos]){
+						DataBuffer[yPos] = (char*) realloc(NULL, strlen(DataBuffer[yPos]) * 2);
+						DataMallocced[yPos] = strlen(DataBuffer[yPos]) * 2;
+					}
+					strcpy(DataBuffer[yPos], temp.data());
+				}
 				CursorLocation.x++;
+			} else if (key == 10) {
+				NumLines++;
+				NumLines++;
+				moveCursor(DOWN);
+				int newYPos = CursorLocation.y + OffsetY;
+				if(newYPos >= DataMallocced.size()){
+					mallocNewLine(newYPos);
+					CursorLocation.x = 0;
+				} else if (DataMallocced[newYPos] <= xPos) {
+					if(xPos == 0){
+						xPos = 4;
+					}
+					DataBuffer[newYPos] = (char*) realloc(NULL, xPos * 2);
+					DataMallocced[newYPos] = xPos * 2;
+				} else if (CursorLocation.x < strlen(DataBuffer[yPos]) - 1) {
+					std::string temp(DataBuffer[yPos]);
+					DataBuffer = (char**) realloc(DataBuffer, sizeof *DataBuffer * NumLines + 1);
+					char** tempBuffer = (char**) malloc(sizeof *tempBuffer * NumLines + 1);
+					for(int i = yPos; i < NumLines - 1; i++) {
+						tempBuffer[i] = (char*) malloc(strlen(DataBuffer[i]) +1 );
+						strcpy(tempBuffer[i], DataBuffer[i]);
+					}
+					for(int i = yPos; i > NumLines - 1; i++){
+						strcpy(DataBuffer[i+1], tempBuffer[i]);
+						free(tempBuffer[i]);
+					}
+					free(tempBuffer);
+					DataBuffer[newYPos] = (char*) realloc(NULL, temp.substr(xPos, temp.size() - 1).size() * 2);
+					strcpy(DataBuffer[yPos], temp.substr(0, xPos).data());
+					strcpy(DataBuffer[newYPos], temp.substr(xPos, temp.size() - 1).data());
+					DataMallocced.insert(DataMallocced.begin() + newYPos, CHAR_MAX);
+					CursorLocation.x = 0;
+				}
 			}
 		}
 
@@ -141,13 +196,19 @@ class Canvas {
 							OffsetY--;
 						}
 					}
+					if(strlen(DataBuffer[CursorLocation.y + OffsetY]) <= 0){
+						CursorLocation.x = 0;
+					}
 					break;
 				case DOWN:
 					CursorLocation.y++;
 					if(CursorLocation.y > Rows) {
 						CursorLocation.y = Rows;
-						if(OffsetY + Rows < NumLines){
-							OffsetY++;
+						OffsetY++;
+					}
+					if(CursorLocation.y + OffsetY <= NumLines - 2){
+						if(strlen(DataBuffer[CursorLocation.y + OffsetY]) <= 0){
+							CursorLocation.x = 0;
 						}
 					}
 					break;

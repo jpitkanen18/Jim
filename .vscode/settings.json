@@ -1,4 +1,6 @@
 {
+	"editor.defaultFormatter": "ms-vscode.cpptools",
+	"editor.formatOnSave": true,
 	"files.associations": {
 		"*.page-template": "vue",
 		"*.layout-template": "vue",
@@ -72,6 +74,13 @@
 		"istream": "cpp",
 		"fstream": "cpp",
 		"*.ipp": "cpp",
-		"iostream": "cpp"
+		"iostream": "cpp",
+		"deque": "cpp",
+		"hash_map": "cpp",
+		"hash_set": "cpp",
+		"forward_list": "cpp",
+		"list": "cpp",
+		"unordered_set": "cpp",
+		"slist": "cpp"
 	}
 }

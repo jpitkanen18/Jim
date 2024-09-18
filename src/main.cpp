@@ -4,7 +4,7 @@
 
 #include <ncurses.h>
 #include <sys/ioctl.h>
-#include <unistd.h> 
+#include <unistd.h>
 
 #include "utils.h"
 #include "canvas.h"
@@ -12,16 +12,21 @@
 
 static bool debug = true;
 
-bool test(char* filePath){
-	std::ifstream test(filePath); 
+bool test(char *filePath)
+{
+	std::ifstream test(filePath);
 	if (!test)
 	{
-		if(debug){
+		if (debug)
+		{
 			println("The file doesn't exist");
 		}
 		return false;
-	} else {
-		if(debug){
+	}
+	else
+	{
+		if (debug)
+		{
 			print("File found at: ");
 			print(filePath);
 			println(" :)");
@@ -30,23 +35,26 @@ bool test(char* filePath){
 	}
 }
 
-std::stringstream fileContents(char* filePath){
+std::stringstream fileContents(char *filePath)
+{
 	std::ifstream inFile;
 	inFile.open(filePath);
 	std::stringstream strStream;
-    strStream << inFile.rdbuf();
+	strStream << inFile.rdbuf();
 	return strStream;
-   
 }
 
-int main(int argc, char** argv){
+int main(int argc, char **argv)
+{
+	setlocale(LC_ALL, "");
 	initscr();
 	cbreak();
 	noecho();
-	keypad (stdscr, TRUE);
+	keypad(stdscr, TRUE);
 	scrollok(stdscr, TRUE);
 	printMetadata();
-	if(debug){
+	if (debug)
+	{
 		printArgs(argc, argv);
 	}
 	struct winsize size;
@@ -55,14 +63,17 @@ int main(int argc, char** argv){
 	println(size.ws_col);
 	print("ws_row: ");
 	println(size.ws_row);
-	if(argc == 1){
-		if(debug){
+	if (argc == 1)
+	{
+		if (debug)
+		{
 			println("No file provided :(");
 		}
 		return 1;
 	}
-	char* filePath = argv[1];
-	if(!test(filePath)){
+	char *filePath = argv[1];
+	if (!test(filePath))
+	{
 		println("Invalid file path, exiting now :/");
 		return 1;
 	}

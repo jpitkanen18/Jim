@@ -7,6 +7,7 @@
             "args": [
                 "-std=c++17",
                 "-fdiagnostics-color=always",
+                "-D_XOPEN_SOURCE_EXTENDED",
                 "-Wall",
                 "-g",
                 "-I/opt/homebrew/include",

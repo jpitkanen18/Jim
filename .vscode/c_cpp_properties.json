@@ -3,9 +3,9 @@
         {
             "name": "Mac",
             "includePath": [
-                "${default}",
-                "${workspaceFolder}/include",
-                "${workspaceFolder}/src/includes"
+                "${default}"
+                // "${workspaceFolder}/include",
+                // "${workspaceFolder}/src/includes"
             ],
             "defines": [],
             "macFrameworkPath": [

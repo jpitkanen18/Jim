@@ -5,7 +5,10 @@
 #include <sstream>
 #include <vector>
 
-#define INSERT_TEXT "INSERT"
+#include "utils.h"
+
+#define INSERT_TEXT "-- INSERT --"
+#define COMMAND_TEXT ": "
 
 struct vec2 {
     vec2() : x(0), y(0) {}
@@ -22,7 +25,8 @@ enum Direction {
 class Canvas {
     char **CanvasBuffer;
     char **DataBuffer;
-    bool insertMode = false;
+    bool InsertMode = false;
+    bool CommandPalette = false;
     std::vector<int> DataMallocced;
 
    public:
@@ -90,29 +94,42 @@ class Canvas {
             strncpy(CanvasBuffer[i], DataBuffer[i + OffsetY], Columns - 2);
         }
         int reduce = 1;
-        if (insertMode) {
+        if (InsertMode || CommandPalette) {
             reduce = 2;
         }
         for (int i = 0; i < Rows - reduce; i++) {
             println(CanvasBuffer[i]);
         }
-        if (insertMode) {
+        if (InsertMode) {
             println(INSERT_TEXT);
+        } else if (CommandPalette) {
+            println(COMMAND_TEXT);
         }
         move(CursorLocation.y, CursorLocation.x);
         refresh();
     }
 
     void enterInsertMode() {
-        insertMode = true;
+        InsertMode = true;
     }
 
-    void exitInsertMode() {
-        insertMode = false;
+    void enterCommandPalette() {
+        CommandPalette = true;
+    }
+
+    void exitModes() {
+        if (InsertMode)
+            InsertMode = false;
+        if (CommandPalette)
+            CommandPalette = false;
     }
 
     bool getInsertMode() {
-        return insertMode;
+        return InsertMode;
+    }
+
+    bool getCommandPalette() {
+        return CommandPalette;
     }
 
     std::string removeAt(char *str, int idx) {
@@ -149,7 +166,7 @@ class Canvas {
                 memmove(DataBuffer + yPos, DataBuffer + yPos + 1, (--NumLines - yPos) * sizeof *DataBuffer);
                 DataMallocced.erase(DataMallocced.begin() + yPos);
                 if (oldLen > 0)
-                    CursorLocation.x = strlen(DataBuffer[newYPos]);
+                    CursorLocation.x = oldLen;
             }
         } else if (key == 10) {
             int newYPos = CursorLocation.y + OffsetY + 1;

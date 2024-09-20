@@ -73,7 +73,7 @@ int main(int argc, char **argv) {
     void (Canvas::*defCB)(void) = &Canvas::render;
     void (Canvas::*moveCB)(Direction dir) = &Canvas::moveCursor;
     void (Canvas::*enterInsert)(void) = &Canvas::enterInsertMode;
-    void (Canvas::*exitInsert)(void) = &Canvas::exitInsertMode;
+    void (Canvas::*exitModes)(void) = &Canvas::exitModes;
 
     InputHandler input(&canvas, defCB);
 
@@ -82,7 +82,7 @@ int main(int argc, char **argv) {
     input.addKeyCallback(KEY_LEFT, moveCB, LEFT, true);
     input.addKeyCallback(KEY_RIGHT, moveCB, RIGHT, true);
     input.addKeyCallback(105, enterInsert);
-    input.addKeyCallback(27, exitInsert, true);
+    input.addKeyCallback(27, exitModes, true);
 
     input.listen();
 

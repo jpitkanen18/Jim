@@ -1,3 +1,4 @@
 jim
 *.exe
 *.dSYM
+.history/

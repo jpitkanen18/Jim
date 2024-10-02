@@ -1,4 +1,5 @@
 #pragma once
+#include <limits.h>
 #include <ncurses.h>
 
 #include <fstream>

@@ -1,6 +1,7 @@
 #pragma once
 #include <ncurses.h>
 
+#include <algorithm>
 #include <fstream>
 #include <functional>
 #include <map>

@@ -7,5 +7,5 @@ Brilliant text editor written in C++
 ### Features
 
 1. :fire: M E M O R Y S A F E T Y :fire:
-2. An abomination of C and C++ coding conventions + extra spice (my ineptitude) :thumbs-up:
+2. An abomination of C and C++ coding conventions + extra spice (my ineptitude) :+1:
 3. Brilliant text editing functionalities (Only ASCII characters supported) :sunglasses:

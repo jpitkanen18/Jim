@@ -4,8 +4,11 @@
 
 Brilliant text editor written in C++
 
+Jim is obviously a Vim clone and by clone I mean a horrible demonic imitation.
+
 ### Features
 
-1. :fire: M E M O R Y S A F E T Y :fire:
+1. :fire: M E M O R Y S A F E T Y :fire: (will segfault at some point)
 2. An abomination of C and C++ coding conventions + extra spice (my ineptitude) :thumbs-up:
-3. Brilliant text editing functionalities (Only ASCII characters supported) :sunglasses:
+3. Brilliant text editing functionalities ~~(Only ASCII characters supported) :sunglasses:~~ BOTCHED UTF-8 SUPPORT :speaking_head:
+4. NOW FEATURING WRITE AND QUIT COMMANDS!!!!! :fire: :fire: :tada: :tada:

@@ -7,87 +7,82 @@
 #include <sstream>
 #include <string>
 
-#include "canvas.h"
-#include "input.h"
-#include "utils.h"
+#include "Jim/Canvas.hpp"
+#include "Jim/InputHandler.hpp"
+#include "Jim/Utils.hpp"
 
-static bool debug = true;
+void setup(int argc, char *argv[]);
 
-bool test(char *filePath) {
-    std::ifstream test(filePath);
-    if (!test) {
-        if (debug) {
-            println("The file doesn't exist");
-        }
-        return false;
-    } else {
-        if (debug) {
-            print("File found at: ");
-            print(filePath);
-            println(" :)");
-        }
-        return true;
+int main(int argc, char *argv[]) {
+    using namespace Utils;
+    using namespace Jim;
+    setup(argc, argv);
+
+    if (argc == 1) {
+#ifdef DEBUG
+        Println("No file provided :(");
+#endif
+        return 1;
     }
+
+    char *filePath = argv[1];
+    if (!Test(filePath)) {
+#ifdef DEBUG
+        Println("Invalid file path, exiting now :/");
+#endif
+        return 1;
+    }
+
+    Canvas canvas(COLS, LINES);
+
+    canvas.LoadFile(filePath);
+
+    canvas.Render();
+    void (Canvas::*defCB)(void) = &Canvas::Render;
+    void (Canvas::*moveCB)(Direction dir) = &Canvas::MoveCursor;
+    void (Canvas::*enterInsert)(void) = &Canvas::EnterInsertMode;
+    void (Canvas::*enterCommandPalette)(void) = &Canvas::EnterCommandPalette;
+    void (Canvas::*exitModes)(void) = &Canvas::ExitModes;
+
+    InputHandler<
+        Canvas, void (Canvas::*)(Direction dir),
+        void (Canvas::*)(void),
+        Direction>
+        input(&canvas, defCB);
+
+    input.AddKeyCallback(KEY_UP, moveCB, UP, true);
+    input.AddKeyCallback(KEY_DOWN, moveCB, DOWN, true);
+    input.AddKeyCallback(KEY_LEFT, moveCB, LEFT, true);
+    input.AddKeyCallback(KEY_RIGHT, moveCB, RIGHT, true);
+    input.AddKeyCallback(105, enterInsert);
+    input.AddKeyCallback(27, exitModes, true);
+    input.AddKeyCallback(58, enterCommandPalette);
+
+    input.Listen();
+
+    endwin();
+
+    return 0;
 }
 
-std::stringstream fileContents(char *filePath) {
-    std::ifstream inFile;
-    inFile.open(filePath);
-    std::stringstream strStream;
-    strStream << inFile.rdbuf();
-    return strStream;
-}
-
-int main(int argc, char **argv) {
+void setup(int argc, char *argv[]) {
+    using namespace Utils;
     setlocale(LC_ALL, "");
     initscr();
     cbreak();
     noecho();
     keypad(stdscr, TRUE);
     scrollok(stdscr, TRUE);
-    printMetadata();
-    if (debug) {
-        printArgs(argc, argv);
-    }
+    PrintMetadata();
+#ifdef DEBUG
+    PrintArgs(argc, argv);
+#endif
     struct winsize size;
     ioctl(STDOUT_FILENO, TIOCGWINSZ, &size);
-    print("ws_col: ");
-    println(size.ws_col);
-    print("ws_row: ");
-    println(size.ws_row);
-    if (argc == 1) {
-        if (debug) {
-            println("No file provided :(");
-        }
-        return 1;
-    }
-    char *filePath = argv[1];
-    if (!test(filePath)) {
-        println("Invalid file path, exiting now :/");
-        return 1;
-    }
-
-    Canvas canvas(COLS, LINES);
-
-    canvas.loadFile(filePath);
-
-    void (Canvas::*defCB)(void) = &Canvas::render;
-    void (Canvas::*moveCB)(Direction dir) = &Canvas::moveCursor;
-    void (Canvas::*enterInsert)(void) = &Canvas::enterInsertMode;
-    void (Canvas::*exitModes)(void) = &Canvas::exitModes;
-
-    InputHandler input(&canvas, defCB);
-
-    input.addKeyCallback(KEY_UP, moveCB, UP, true);
-    input.addKeyCallback(KEY_DOWN, moveCB, DOWN, true);
-    input.addKeyCallback(KEY_LEFT, moveCB, LEFT, true);
-    input.addKeyCallback(KEY_RIGHT, moveCB, RIGHT, true);
-    input.addKeyCallback(105, enterInsert);
-    input.addKeyCallback(27, exitModes, true);
-
-    input.listen();
-
-    endwin();
-
-    return 0;
+#ifdef DEBUG
+    Print("ws_col: ");
+    Println(size.ws_col);
+    Print("ws_row: ");
+    Println(size.ws_row);
+#endif
 }

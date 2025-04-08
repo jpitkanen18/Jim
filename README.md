@@ -2,7 +2,7 @@
 
 ![image](https://img.shields.io/badge/C%2B%2B-00599C?style=for-the-badge&logo=c%2B%2B&logoColor=white) ![image](https://img.shields.io/badge/apple%20silicon-333333?style=for-the-badge&logo=apple&logoColor=white)
 
-Brilliant text editor written in C++
+Brilliant text editor written in C++ with (mostly) ✨*manual memory management* ✨!!
 
 Jim is obviously a Vim clone and by clone I mean a horrible demonic imitation.
 

@@ -6,12 +6,12 @@
 #define QUIT_COMMAND_CAPITALIZED 'Q'
 
 namespace Jim {
-typedef enum {
+typedef enum Command {
     WRITE,
     QUIT,
 } Command;
 
-typedef struct {
+typedef struct Commands {
     Command* commands;
     size_t size;
 } Commands;

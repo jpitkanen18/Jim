@@ -10,21 +10,23 @@
 #define COMMAND_TEXT ": "
 
 namespace Jim {
-typedef struct {
+
+typedef struct Character {
     char content[2];
 } Character;
 
-typedef struct {
+typedef struct Line {
     Character* chars;
     int length;
 } Line;
 
-typedef enum {
+typedef enum Direction {
     UP,
     DOWN,
     LEFT,
     RIGHT
 } Direction;
+
 }  // namespace Jim
 
 #include "Commands.hpp"

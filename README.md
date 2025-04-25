@@ -8,6 +8,8 @@ Jim is obviously a Vim clone and by clone I mean a horrible demonic imitation.
 
 It might clear your file on write so only test this on dummy files and if you delete your favourite .cpp file I won't be held liable as this software is provided as is with no warranties or guarantees.
 
+![image](images/jim.png)
+
 ### Features
 
 1. :fire: M E M O R Y S A F E T Y :fire: (will segfault at some point)

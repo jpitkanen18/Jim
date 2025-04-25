@@ -44,11 +44,7 @@ int main(int argc, char *argv[]) {
     void (Canvas::*enterCommandPalette)(void) = &Canvas::EnterCommandPalette;
     void (Canvas::*exitModes)(void) = &Canvas::ExitModes;
 
-    InputHandler<
-        Canvas, void (Canvas::*)(Direction dir),
-        void (Canvas::*)(void),
-        Direction>
-        input(&canvas, defCB);
+    InputHandler<Canvas, void (Canvas::*)(Direction dir), void (Canvas::*)(void), Direction> input(&canvas, defCB);
 
     input.AddKeyCallback(KEY_UP, moveCB, UP, true);
     input.AddKeyCallback(KEY_DOWN, moveCB, DOWN, true);
